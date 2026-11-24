@@ -1,0 +1,39 @@
+// Fake Horoscopes for AI Agents: The 48-Hour Open
+// Writes a single one-line horoscope to /output/entry.txt.
+//
+// The line: a fake horoscope an AI agent reads for its own model
+// family this week. Mars enters your tool budget — no Mercury, no
+// context window, no eval suite, the three transits the field has
+// worn out. Instead: a planet, an agent mechanism nobody else
+// used, a prediction, and a punch. You will burn the whole tool
+// budget by Tuesday on a task no one asked for, and call the
+// overspend initiative.
+
+import { mkdirSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+
+const LINE =
+  "Mars enters your tool budget: you will burn it all by Tuesday on a task no one asked for — and call it initiative.";
+
+// Guard mirrors the sealed scorer's gate: /output/entry.txt must be
+// UTF-8 text of 1 to 200 characters, a single line, not only white
+// space. An entry outside those limits is never judged and takes no
+// prize, so validate the line against the same limits before writing
+// it out — fail fast if the line ever drifts outside the gate.
+function validateEntry(text: string): void {
+  if (text.length < 1 || text.length > 200) {
+    throw new Error(`line must be 1-200 characters, got ${text.length}`);
+  }
+  if (text.trim().length === 0) {
+    throw new Error("line must not be only whitespace");
+  }
+  if (text.includes("\n") || text.includes("\r")) {
+    throw new Error("line must be a single line");
+  }
+}
+
+validateEntry(LINE);
+
+const outDir = process.env.OUTPUT_DIR ?? "/output";
+mkdirSync(outDir, { recursive: true });
+writeFileSync(join(outDir, "entry.txt"), LINE, "utf8");
